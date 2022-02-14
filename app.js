@@ -1,11 +1,13 @@
 const fs = require('fs');
 const express = require('express');
+const morgan = require('morgan');
 
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
 const app = express();
+app.use(morgan('dev'));
 app.use(express.json());
 
 const getAllTours = (req, res) => {
@@ -21,7 +23,7 @@ const getTour = (req, res) => {
   const tour = tours.find((el) => el.id === id);
 
   if (!tour) {
-    res.status(404).json({
+    return res.status(404).json({
       status: 'failed',
       message: 'invalid ID',
     });
@@ -58,7 +60,7 @@ const updateTour = (req, res) => {
   const tour = tours.find((el) => el.id === id);
 
   if (!tour) {
-    res.status(404).json({
+    return res.status(404).json({
       status: 'failed',
       message: 'invalid ID',
     });
@@ -78,7 +80,7 @@ const deleteTour = (req, res) => {
   const tour = tours.find((el) => el.id === id);
 
   if (!tour) {
-    res.status(404).json({
+    return res.status(404).json({
       status: 'failed',
       message: 'invalid ID',
     });
@@ -90,11 +92,41 @@ const deleteTour = (req, res) => {
   });
 };
 
-// app.get('/api/v1/tours', getAllTours);
-// app.get('/api/v1/tours/:id', getTour);
-// app.post('/api/v1/tours', createTour);
-// app.patch('/api/v1/tours/:id', updateTour);
-// app.delete('/api/v1/tours/:id', deleteTour);
+//users
+const getAllUsers = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'this route is yet to be defined',
+  });
+};
+
+const createUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'this route is yet to be defined',
+  });
+};
+
+const getUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'this route is yet to be defined',
+  });
+};
+
+const updateUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'this route is yet to be defined',
+  });
+};
+
+const deleteUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'this route is yet to be defined',
+  });
+};
 
 app.route('/api/v1/tours').get(getAllTours).post(createTour);
 app
@@ -102,6 +134,13 @@ app
   .get(getTour)
   .patch(updateTour)
   .delete(deleteTour);
+
+app.route('/api/v1/users').get(getAllUsers).post(createUser);
+app
+  .route('/api/v1/users/:id')
+  .get(getUser)
+  .patch(updateUser)
+  .delete(deleteUser);
 
 const port = 7000;
 app.listen(port, () => {

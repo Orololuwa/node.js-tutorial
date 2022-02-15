@@ -1,0 +1,1 @@
+docker run --rm -it --name node_farm -v "$PWD":/home/app -w /home/app -e "PORT=4200" -p 4200:4200 oladipo/node-angular:latest /bin/sh

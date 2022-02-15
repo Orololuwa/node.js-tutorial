@@ -3,7 +3,7 @@ dotenv.config({ path: './config.env' });
 
 const app = require('./app');
 
-const port = 7000;
+const port = process.env.NODE_DOCKER_PORT;
 app.listen(port, () => {
   console.log(`App running on port ${port}...`);
 });

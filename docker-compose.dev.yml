@@ -11,3 +11,6 @@ services:
 
     env_file:
       - config.env
+
+    environment:
+      - NODE_PATH=.

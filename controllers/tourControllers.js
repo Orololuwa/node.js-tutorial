@@ -3,8 +3,8 @@ const ApiFeatures = require('utils/apiFeatures');
 
 exports.aliasTopCheap = async (req, res, next) => {
   req.query.limit = '5';
-  req.query.sort = '-ratingsAve,price';
-  req.query.fields = 'name,price,summary,difficulty,ratingsAve';
+  req.query.sort = '-ratingsAverage,price';
+  req.query.fields = 'name,price,summary,difficulty,ratingsAverage';
   next();
 };
 
@@ -142,6 +142,42 @@ exports.deleteTour = async (req, res) => {
     await Tour.findByIdAndDelete(req.params.id);
     res.status(204).json({
       status: 'success',
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err,
+    });
+  }
+};
+
+exports.getTourStat = async (req, res) => {
+  try {
+    const stats = await Tour.aggregate([
+      {
+        $match: { ratingsAverage: { $gte: 4.5 } },
+      },
+      {
+        $group: {
+          _id: { $toUpper: '$difficulty' },
+          numTours: { $sum: 1 },
+          numRatings: { $sum: '$ratingsQuantity' },
+          avgRating: { $avg: '$ratingsAverage' },
+          avgPrice: { $avg: '$price' },
+          minPrice: { $min: '$price' },
+          maxPrice: { $max: '$price' },
+        },
+      },
+      {
+        $sort: {
+          avgPrice: 1,
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      status: 'success',
+      stats,
     });
   } catch (err) {
     res.status(400).json({

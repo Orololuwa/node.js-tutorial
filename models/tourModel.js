@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -8,6 +9,7 @@ const tourSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
+    slug: String,
     duration: {
       type: Number,
       required: [true, 'A tour must have a duration'],
@@ -44,7 +46,7 @@ const tourSchema = new mongoose.Schema(
     },
     imageCover: {
       type: String,
-      required: [true, 'Atour must have a cover image'],
+      required: [true, 'A tour must have a cover image'],
     },
     images: [String],
     createdAt: {
@@ -62,6 +64,17 @@ const tourSchema = new mongoose.Schema(
 
 tourSchema.virtual('week').get(function () {
   return (this.duration / 7).toFixed(2);
+});
+
+// DOCUMENT MIDDLEWARE for save() and insert()
+tourSchema.pre('save', function (next) {
+  this.slug = slugify(this.name);
+  next();
+});
+
+tourSchema.post('save', function (doc, next) {
+  console.log(doc);
+  next();
 });
 
 const Tour = mongoose.model('Tour', tourSchema);

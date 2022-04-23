@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon server.js",
     "docker:dev": "docker-compose -f docker-compose.dev.yml up",
-    "start:prod": "NODE_ENV=production nodemon server.js"
+    "start:prod": "NODE_ENV=production nodemon server.js",
+    "debug": "ndb server.js"
   },
   "author": "Emmanuel Orololuwa Awolusi",
   "license": "ISC",

@@ -1,3 +1,10 @@
+const AppError = require('../utils/appError');
+
+const handleCastErrorDB = (err) => {
+  const message = `Invalid ${err.path}: ${err.value}`;
+  return new AppError(message, 400);
+};
+
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -9,7 +16,7 @@ const sendErrorDev = (err, res) => {
 
 const sendErrorProd = (err, res) => {
   // Operational trusted Error: Send message to the client
-  if ((err, isOperational)) {
+  if (err.isOperational) {
     res.status(err.statusCode).json({
       status: err.status,
       message: err.message,
@@ -19,7 +26,7 @@ const sendErrorProd = (err, res) => {
     //   1) Log the error
     console.error('Error ', err);
 
-    // 2) S end generic message
+    // 2) Send generic message
     res.status(500).json({
       status: 'fail',
       message: 'Oops! Something went wrong',
@@ -31,9 +38,19 @@ module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
-  if (process.env.NODE_ENV === 'development') {
-    return sendErrorDev(err, res);
-  } else if ((process.env.NODE_ENV = 'production')) {
-    return sendErrorProd(err, res);
-  }
+  // if (process.env.NODE_ENV === 'development') {
+  //   return sendErrorDev(err, res);
+  // } else if ((process.env.NODE_ENV = 'production')) {
+  //   let error = { ...err };
+
+  //   if (error.name === 'CastError') error = handleCastErrorDB(error);
+
+  //   sendErrorProd(error, res);
+  // }
+
+  let error = JSON.parse(JSON.stringify(err));
+
+  if (error.name === 'CastError') error = handleCastErrorDB(error);
+
+  sendErrorProd(error, res);
 };
